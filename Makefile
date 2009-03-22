@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror `pkg-config --cflags gobject-2.0 gtk+-2.0 gthread-2.0`
+CFLAGS = -Wall -Werror -g -O0 `pkg-config --cflags gobject-2.0 gtk+-2.0 gthread-2.0`
 LDFLAGS = -g -O0 `pkg-config --libs gobject-2.0 gtk+-2.0 gthread-2.0` 
 OBJECTS = $(SOURCES:.c=.o)
 BUILD = teuthida 

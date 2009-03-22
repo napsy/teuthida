@@ -22,6 +22,8 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+#include "document.h"
+
 G_BEGIN_DECLS
 
 #define T_TYPE_CANVAS t_canvas_get_type()
@@ -51,7 +53,10 @@ typedef struct {
 
 GType t_canvas_get_type (void);
 
-TCanvas* t_canvas_new (void);
+TCanvas* t_canvas_new(Document *document);
+
+void
+t_canvas_change_document(TCanvas *canvas, Document *document);
 
 G_END_DECLS
 

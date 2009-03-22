@@ -19,11 +19,16 @@
 #ifndef __TEUTHIDA_MAIN_H__
 #define __TEUTHIDA_MAIN_H__
 
+#include "document.h"
+
 struct teuthida_main_s {
     GtkWidget *window;
     GtkWidget *box_main,
               *paned_main;
     GtkWidget *item_view;
+    GtkWidget *scroll;
+
+    Document *document;
 };
 
 struct teuthida_main_s *teuthida_main;

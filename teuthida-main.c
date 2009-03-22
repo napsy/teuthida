@@ -26,7 +26,8 @@ const char MENU_XML[] = "<ui><menubar><menu action=\"FileMenuAction\"><menuitem 
 void
 teuthida_menu_file_new(GtkAction *action, gpointer data)
 {
-    document_new_show();
+    TCanvas *canvas = (TCanvas *)data;
+    document_new_show(canvas);
 }
 
 void
@@ -42,7 +43,7 @@ teuthida_menu_help_about(GtkAction *action, gpointer data)
 }
 
 GtkWidget *
-teuthida_menu()
+teuthida_menu(TCanvas *canvas)
 {
     GtkUIManager *manager;
     GtkWidget *ui;
@@ -61,7 +62,7 @@ teuthida_menu()
     action = gtk_action_new("FileNewAction", "_New Document", NULL, NULL);
     gtk_action_group_add_action(action_group, action);
 g_signal_connect(G_OBJECT(action), "activate",
-        G_CALLBACK(teuthida_menu_file_new), NULL);
+        G_CALLBACK(teuthida_menu_file_new), canvas);
 
     /* Edit Menu. */
     action = gtk_action_new("EditMenuAction", "_Edit", NULL, NULL);
@@ -100,18 +101,28 @@ teuthida_init()
 
     teuthida_main->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     teuthida_main->paned_main = gtk_hpaned_new();
+    teuthida_main->scroll = gtk_scrolled_window_new(NULL, NULL);
     teuthida_main->box_main = gtk_vbox_new(FALSE, 2);
     teuthida_main->item_view = gtk_tree_view_new();
 
-    menu = teuthida_menu();
-    gtk_box_pack_start(GTK_BOX(teuthida_main->box_main), menu, FALSE, FALSE, 2);
+    teuthida_main->document = document_new(640, 480, "Untitled");
+    t_document_new = NULL;
 
+    canvas = GTK_WIDGET(t_canvas_new(teuthida_main->document));
+    menu = teuthida_menu((TCanvas *)canvas);
+
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(teuthida_main->scroll),
+            canvas);
+    gtk_box_pack_start(GTK_BOX(teuthida_main->box_main), menu, FALSE, FALSE, 2);
     gtk_paned_add1(GTK_PANED(teuthida_main->paned_main), teuthida_main->item_view);
-    canvas = GTK_WIDGET(t_canvas_new());
-    gtk_paned_add2(GTK_PANED(teuthida_main->paned_main), canvas);
+    gtk_paned_add2(GTK_PANED(teuthida_main->paned_main), teuthida_main->scroll);
 
     gtk_paned_set_position(GTK_PANED(teuthida_main->paned_main), 150);
-    gtk_box_pack_start(GTK_BOX(teuthida_main->box_main), teuthida_main->paned_main, TRUE, TRUE, 2);
+    gtk_box_pack_start(GTK_BOX(teuthida_main->box_main), teuthida_main->paned_main,
+            TRUE, TRUE, 2);
+
+
+
 
     gtk_window_set_title(GTK_WINDOW(teuthida_main->window), "Teuthida");
     g_signal_connect(G_OBJECT(teuthida_main->window), "destroy", gtk_main_quit, NULL);
