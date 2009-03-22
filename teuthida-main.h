@@ -21,6 +21,9 @@
 
 struct teuthida_main_s {
     GtkWidget *window;
+    GtkWidget *box_main,
+              *paned_main;
+    GtkWidget *item_view;
 };
 
 struct teuthida_main_s *teuthida_main;

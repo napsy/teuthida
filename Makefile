@@ -4,7 +4,9 @@ LDFLAGS = -g -O0 `pkg-config --libs gobject-2.0 gtk+-2.0 gthread-2.0`
 OBJECTS = $(SOURCES:.c=.o)
 BUILD = teuthida 
 SOURCES = main.c \
+	  document.c \
 	  t-canvas.c \
+	  document-new.c \
 	  teuthida-main.c
 
 all: $(SOURCES) $(BUILD)
