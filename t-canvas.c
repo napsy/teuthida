@@ -32,7 +32,6 @@ struct _TCanvasPrivate {
 
     gint border;
 
-    gboolean drawing;
     gdouble click_src_x, click_src_y,
             click_cur_x, click_cur_y;
 
@@ -65,11 +64,9 @@ t_canvas_mouse_move(GtkWidget *widget, GdkEventMotion *e)
     TCanvasPrivate *priv = GET_PRIVATE(widget);
 
     if ((priv->events & GDK_BUTTON_PRESS_MASK) == GDK_BUTTON_PRESS_MASK) {
-        if (priv->drawing == FALSE) {
         priv->click_cur_x = e->x;
         priv->click_cur_y = e->y;
         gtk_widget_queue_draw(widget);
-        }
     }
     return TRUE;
 }
@@ -80,7 +77,6 @@ t_canvas_expose(GtkWidget *widget, GdkEventExpose *e)
     cairo_t *cr;
     TCanvasPrivate *priv = GET_PRIVATE(widget);
     int w, h, x, y, d;
-    priv->drawing = TRUE;
     cr = gdk_cairo_create(widget->window);
 
     gdk_window_get_geometry(widget->window, &x, &y, &w, &h, &d);
@@ -120,7 +116,6 @@ t_canvas_expose(GtkWidget *widget, GdkEventExpose *e)
 
 
     cairo_destroy(cr);
-    priv->drawing = FALSE;
     return TRUE;
 }
 
@@ -181,7 +176,6 @@ t_canvas_new (void)
   TCanvasPrivate *priv = GET_PRIVATE(canvas);
   gtk_widget_set_events(GTK_WIDGET(canvas), GDK_ALL_EVENTS_MASK);
   priv->events = 0;
-  priv->drawing = FALSE;
   priv->border = 20;
   return canvas;
 }
