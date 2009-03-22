@@ -105,6 +105,8 @@ teuthida_init()
     teuthida_main->box_main = gtk_vbox_new(FALSE, 2);
     teuthida_main->item_view = gtk_tree_view_new();
 
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(teuthida_main->scroll),
+        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     teuthida_main->document = document_new(640, 480, "Untitled");
     t_document_new = NULL;
 

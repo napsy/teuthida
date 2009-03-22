@@ -184,6 +184,7 @@ t_canvas_new(Document *document)
     priv->border = 20;
     priv->document = document;
 
+    gtk_widget_set_size_request(GTK_WIDGET(canvas), 640, 480);
     gtk_widget_set_sensitive(GTK_WIDGET(canvas), TRUE);
     return canvas;
 }
@@ -191,9 +192,12 @@ t_canvas_new(Document *document)
 void
 t_canvas_change_document(TCanvas *canvas, Document *document)
 {
+    gint w,h;
     TCanvasPrivate *priv = GET_PRIVATE(canvas);
     if (priv->document)
         g_object_unref(priv->document);
+    g_object_get(G_OBJECT(document), "width", &w, "height", &h, NULL);
+    gtk_widget_set_size_request(GTK_WIDGET(canvas), w, h);
     priv->document = document;
     gtk_widget_queue_draw(GTK_WIDGET(canvas));
 }

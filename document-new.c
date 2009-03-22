@@ -1,3 +1,21 @@
+/*
+ * Teuthida
+ * Copyright (C) 2009  Luka Napotnik <luka.napotnik@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "document-new.h"
 #include "document.h"
 #include "t-canvas.h"
@@ -69,10 +87,19 @@ document_new_show(TCanvas *canvas)
     t_document_new->label_format = gtk_label_new("Format:");
     t_document_new->label_width = gtk_label_new("Width:");
     t_document_new->label_height = gtk_label_new("Height:");
+    t_document_new->label_orient = gtk_label_new("Orientation:");
     t_document_new->spin_width = gtk_spin_button_new_with_range(1, 5000, 1);
     t_document_new->spin_height = gtk_spin_button_new_with_range(1, 5000, 1);
     t_document_new->combo_format = gtk_combo_box_new_text();
+    t_document_new->radio_horizontal = gtk_radio_button_new_with_label(NULL, "Horizontal");
+    t_document_new->radio_vertical = 
+        gtk_radio_button_new_with_label(gtk_radio_button_get_group(GTK_RADIO_BUTTON(t_document_new->radio_horizontal)), "Vertical");
 
+    t_document_new->box_orient = gtk_hbox_new(FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(t_document_new->box_orient),
+            t_document_new->radio_horizontal, FALSE, FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(t_document_new->box_orient),
+            t_document_new->radio_vertical, FALSE, FALSE, 2);
     g_signal_connect(G_OBJECT(t_document_new->combo_format), "changed",
             G_CALLBACK(t_document_combo_format_changed), NULL);
 
@@ -81,6 +108,7 @@ document_new_show(TCanvas *canvas)
     gtk_misc_set_alignment(GTK_MISC(t_document_new->label_format), 0.0, 0.0);
     gtk_misc_set_alignment(GTK_MISC(t_document_new->label_width), 0.0, 0.0);
     gtk_misc_set_alignment(GTK_MISC(t_document_new->label_height), 0.0, 0.0);
+    gtk_misc_set_alignment(GTK_MISC(t_document_new->label_orient), 0.0, 0.0);
 
     gtk_combo_box_append_text(GTK_COMBO_BOX(t_document_new->combo_format),
             "A4 paper");
@@ -124,6 +152,8 @@ document_new_show(TCanvas *canvas)
 
 
 
+    gtk_box_pack_start(GTK_BOX(t_document_new->box), t_document_new->label_orient, FALSE, FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(t_document_new->box), t_document_new->box_orient, FALSE, FALSE, 2);
     gtk_box_pack_end(GTK_BOX(t_document_new->box), t_document_new->button_box, FALSE, FALSE, 2);
     gtk_window_set_title(GTK_WINDOW(t_document_new->window), "New Document");
 
