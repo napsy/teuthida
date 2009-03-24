@@ -21,7 +21,7 @@
 #include "document-new.h"
 #include "t-canvas.h"
 
-const char MENU_XML[] = "<ui><menubar><menu action=\"FileMenuAction\"><menuitem name=\"New\" action=\"FileNewAction\" /></menu><menu action=\"EditMenuAction\"><menuitem name=\"Cut\" action=\"EditCutAction\" /></menu><menu action=\"HelpMenuAction\"><menuitem name=\"About\" action=\"HelpAboutAction\" /></menu></menubar></ui>";
+const char MENU_XML[] = "<ui><menubar name=\"MenuBar\"><menu action=\"FileMenuAction\"><menuitem name=\"New\" action=\"FileNewAction\" /><separator /><menuitem name=\"Quit\" action=\"FileQuitAction\" /></menu><menu action=\"EditMenuAction\"><menuitem name=\"Cut\" action=\"EditCutAction\" /></menu><menu name=\"View\" action=\"ViewMenuAction\"><menuitem name=\"GridMenu\" action=\"ViewGridAction\" /></menu><menu action=\"HelpMenuAction\"><menuitem name=\"About\" action=\"HelpAboutAction\" /></menu></menubar></ui>";
 
 void
 teuthida_menu_file_new(GtkAction *action, gpointer data)
@@ -42,6 +42,14 @@ teuthida_menu_help_about(GtkAction *action, gpointer data)
                        NULL);
 }
 
+void
+teuthida_menu_view_grid(GtkAction *action, gpointer data)
+{
+    TCanvas *canvas = (TCanvas *)data;
+    printf("GRID\n");
+    t_canvas_set_grid(canvas, TRUE);
+}
+
 GtkWidget *
 teuthida_menu(TCanvas *canvas)
 {
@@ -50,30 +58,49 @@ teuthida_menu(TCanvas *canvas)
     GError *error = NULL;
     GtkAction *action;
     GtkActionGroup *action_group;
+    GtkWidget *item, *check_grid;
 
     manager = gtk_ui_manager_new();
 
 
+    check_grid = gtk_check_button_new();
     action_group = gtk_action_group_new("FileActions");
 
     /* File Menu. */
     action = gtk_action_new("FileMenuAction", "_File", NULL, NULL);
     gtk_action_group_add_action(action_group, action);
-    action = gtk_action_new("FileNewAction", "_New Document", NULL, NULL);
+    action = gtk_action_new("FileNewAction", "_New Document", NULL, GTK_STOCK_NEW);
     gtk_action_group_add_action(action_group, action);
-g_signal_connect(G_OBJECT(action), "activate",
+    g_signal_connect(G_OBJECT(action), "activate",
         G_CALLBACK(teuthida_menu_file_new), canvas);
+    action = gtk_action_new("FileQuitAction", "_Quit", NULL, GTK_STOCK_QUIT);
+    gtk_action_group_add_action(action_group, action);
+    g_signal_connect(G_OBJECT(action), "activate",
+        G_CALLBACK(gtk_main_quit), NULL);
 
     /* Edit Menu. */
     action = gtk_action_new("EditMenuAction", "_Edit", NULL, NULL);
     gtk_action_group_add_action(action_group, action);
-    action = gtk_action_new("EditCutAction", "_Cut", NULL, NULL);
+    action = gtk_action_new("EditCutAction", "_Cut", NULL, GTK_STOCK_CUT);
     gtk_action_group_add_action(action_group, action);
+    
+    /* View Menu. */
+    action = gtk_action_new("ViewMenuAction", "_View", NULL, NULL);
+    gtk_action_group_add_action(action_group, action);
+    action = gtk_action_new("ViewGridAction", "Show Grid", NULL, NULL);
+    item = gtk_action_create_menu_item(action);
+    gtk_action_disconnect_proxy(action, item);
+    gtk_action_connect_proxy(action, check_grid);
+    gtk_action_group_add_action(action_group, action);
+    g_signal_connect(G_OBJECT(action), "activate",
+        G_CALLBACK(teuthida_menu_view_grid), canvas);
+
+
 
     /* Help Menu. */
     action = gtk_action_new("HelpMenuAction", "_Help", NULL, NULL);
     gtk_action_group_add_action(action_group, action);
-    action = gtk_action_new("HelpAboutAction", "_About", NULL, NULL);
+    action = gtk_action_new("HelpAboutAction", "_About", NULL, GTK_STOCK_ABOUT);
     gtk_action_group_add_action(action_group, action);
 
     g_signal_connect(G_OBJECT(action), "activate",
@@ -85,9 +112,10 @@ g_signal_connect(G_OBJECT(action), "activate",
     if (error)
         printf("Error: %s\n", error->message);
 
-    ui = gtk_ui_manager_get_widget(manager, "/menubar");
+    ui = gtk_ui_manager_get_widget(manager, "/MenuBar");
     if (!ui)
         printf("Fail!!\n");
+
 
     return ui;
 }

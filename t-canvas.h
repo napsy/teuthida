@@ -58,6 +58,9 @@ TCanvas* t_canvas_new(Document *document);
 void
 t_canvas_change_document(TCanvas *canvas, Document *document);
 
+void
+t_canvas_set_grid(TCanvas *canvas, gboolean show_grid);
+
 G_END_DECLS
 
 #endif /* __T_CANVAS_H__ */
